@@ -1,14 +1,7 @@
-const chromium = require("chrome-aws-lambda");
-
-let puppeteer;
-if (process.env.NETLIFY) {
-  puppeteer = chromium.puppeteer;
-} else {
-  puppeteer = require("puppeteer");
-}
+const pdf = require("html-pdf-node");
 
 exports.handler = async (event) => {
-  // Verifica método POST
+  // Solo POST
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -18,33 +11,20 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { html, url } = JSON.parse(event.body || "{}");
+    const { html } = JSON.parse(event.body || "{}");
 
-    if (!html && !url) {
+    if (!html) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Debes enviar 'html' o 'url'" }),
+        body: JSON.stringify({ error: "Debes enviar 'html'" }),
       };
     }
 
-    const browser = await puppeteer.launch(
-      process.env.NETLIFY
-        ? {
-            executablePath: await chromium.executablePath,
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            headless: chromium.headless,
-          }
-        : { headless: true }
-    );
+    // Objeto para html-pdf-node
+    const options = { format: "A4" };
+    const file = { content: html };
 
-    const page = await browser.newPage();
-
-    if (url) await page.goto(url, { waitUntil: "networkidle0" });
-    else await page.setContent(html, { waitUntil: "networkidle0" });
-
-    const pdfBuffer = await page.pdf({ format: "A4", printBackground: true });
-    await browser.close();
+    const pdfBuffer = await pdf.generatePdf(file, options);
 
     return {
       statusCode: 200,

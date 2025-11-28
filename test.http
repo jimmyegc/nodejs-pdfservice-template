@@ -5,3 +5,12 @@ Content-Type: application/json
 {
   "html": "<html><body><h1>Hola Netlify!</h1></body></html>"
 }
+
+### test
+POST https://api-pdfservice.netlify.app/.netlify/pdf-service
+Content-Type: application/json
+
+{
+  "html": "<html><body><h1>Hola Netlify!</h1></body></html>"
+}
+
