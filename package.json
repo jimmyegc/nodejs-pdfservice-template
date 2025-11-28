@@ -9,9 +9,7 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {    
-    "html-pdf-node": "^1.0.8"    
-  },
-  "devDependencies": {    
+  "dependencies": {
+    "pdfkit": "^0.17.2"
   }
 }

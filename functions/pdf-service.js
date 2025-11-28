@@ -1,4 +1,5 @@
-const pdf = require("html-pdf-node");
+const PDFDocument = require("pdfkit");
+const { Buffer } = require("buffer");
 
 exports.handler = async (event) => {
   // Solo POST
@@ -11,20 +12,28 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { html } = JSON.parse(event.body || "{}");
+    const { text } = JSON.parse(event.body || "{}");
 
-    if (!html) {
+    if (!text) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Debes enviar 'html'" }),
+        body: JSON.stringify({ error: "Debes enviar 'text'" }),
       };
     }
 
-    // Objeto para html-pdf-node
-    const options = { format: "A4" };
-    const file = { content: html };
+    // Crear PDF
+    const doc = new PDFDocument();
+    const chunks = [];
+    doc.on("data", (chunk) => chunks.push(chunk));
+    doc.on("end", () => {});
 
-    const pdfBuffer = await pdf.generatePdf(file, options);
+    doc.fontSize(18).text(text, { align: "center" });
+    doc.end();
+
+    // Esperar a que termine
+    const pdfBuffer = await new Promise((resolve) => {
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+    });
 
     return {
       statusCode: 200,
