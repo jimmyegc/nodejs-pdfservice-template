@@ -9,12 +9,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
-    "chrome-aws-lambda": "^10.1.0",
-    "html-pdf-node": "^1.0.8",
-    "puppeteer-core": "^10.4.0"
+  "dependencies": {    
+    "html-pdf-node": "^1.0.8"    
   },
-  "devDependencies": {
-    "puppeteer": "^10.4.0"
+  "devDependencies": {    
   }
 }
